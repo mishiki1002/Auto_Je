@@ -1,90 +1,79 @@
-#include <Encoder.h>
-#include "NAxisMotion.h"
-#include <Wire.h>
-#include <Servo.h>
-#include <SPI.h>
-#include <Pixy.h>
+#include <Encoder.h>        // Find out how far we moved
+#include "NAxisMotion.h"    // Contains the bridge code between the API and the Arduino Enviorment
+#include <Wire.h>           // Controll the drive motors manually
+#include <Servo.h>          // Controll the steering wheel with the built in encoder
+#include <SPI.h>            
 
-//Objects
-NAxisMotion motionShield;
-Pixy camera;
-Servo motor;
-Servo steer;
-Servo Sweeper;
+// Gyro
+NAxisMotion gyro;
 
-//Motors
-//Pin numbers for ease of access
-int encLeftPin = 18;
-int encRightPin = 19;
-int drivePin = 5;
-int steerPin = 9;
-int frSweeperPin = 12;
-int frSensorPin = 3;
+// Encoder Connection Pins
+int encoder_Left = NULL;
+int encoder_Right = NULL;
 
-//Paramaters
-//Some commonly used steering values
-int rightTurnStart = 96;
-int rightTurnEnd = 60;
-int leftTurnStart = 72;
-int leftTurnEnd = 67;
+// Find out if we want to have both motors move unanimously or if 
+// We want independent motion for quick turns and such
+int Drive_Train_Pin = NULL;
+int Steering_Wheel_Pin = NULL;
+int Distance_Sensor_Pin = NULL:
 
-//Values for the steering motor
-//Remember that it is sideways so you
-int maxSteer = 150;
-int midSteer = 90;
-int minSteer = 35;
-
-//Debuging Data
-bool firstRun = true;
-bool debugMode = true;
-
-//What task to run
-int task;
-
-//Binary Code to run for selectin which task to run
-//0 = nothing
-int taskSwitches[] = {
-    6,
-    7,
-    8
-}
-
-//Bling
-int headLights = 16;
-int tailLights = 15;
-
-//Max Switches on board
-int switches = 3;
-
-Matbotix frSensor(frSensorPin, Maxbotix::PW, Maxbotix::LV, Maxbotix::BEST);
-Encoder enc(encLeftPin, encRightPin);
+// Motor Definitions
+Servo Chassis;
+Servo Steering_Wheel;
+Servo Distance_Sensor;
 
 
-int feetToInches(int feet){
-    return feet * 12;
-}
+// Some Steering Wheel Values
+int RightTurn = 96;
+int LeftTurn = 72;
+
+int Max_Right = 150;
+int Home = 90;
+int Max_Left = 35;
+
+// Some Drive Speeds
+int Stop = 90;
+int Full_Forward = 180;
+int FUll_Backwards = 8;
+
+// LED Pins
+int Head_Lights = NULL;
+int Tail_Lights = NULL;
+
+/* Tasks
+ * Look at the pamphlict to see all the tasks.
+ */
+int Task = NULL;
+
 
 void setup(){
-    pinMode(headLights, OUTPUT);
-    pinMode(tailLights, OUTPUT);
-    digitalWrite(headLights, HIGH);
-    digitalWrite(tailLights, HIGH);
+    Serial.begin(9600); // Begin our communications on a channel with baudrate of 9600
+    Serial.println("#### Serial Comunications Initialized ####");
 
-    motor.attach(drivePin);
-    steer.attach(steerPin, 700, 2300);
-    frSweep.attach(frSweepPin);
+    // Connect The LED's to their pins and set it as a output
+    Serial.println("Setup : Connecting LED's");
+    pinMode(Head_Lights, OUTPUT);
+    pinMode(Tail_Lights, OUTPUT);
+    
+    // Turn all the lights on to signal the startup Proccess
+    Serial.println("Setup : Turning LEDS's On");
+    digitalWrite(Head_Lights, HIGH);
+    digitalWrite(Tail_Lights, HIGH);
+    
+    // Connect Our Drive Train
+    Serial.println("Setup : Connecting Chassis to pin [" + Drive_Train_Pin + "]"); 
+    Chassis.attach(Drive_Train_Pin);
+    Serial.println("Setup : Connecting Steering Wheel to pin [" + Steering_Wheel_Pin + "] with update rates of [700] and [2300]");
+    Steering_Wheel.attach(Steering_Wheel_Pin, 700, 2300); // Connect our Servo but we are going to predefine the update rate
+    
+    
+    // Delay 3 seconds before running main loop.
+    // Shortten or remove when debugging or testing new code
+    delay(3000);
+}
 
-    //Start serial communications at 9000 buad rate
-    Serial.begin(9000);
-    Serial.println("Serial Comm Begin");
-
-    pixy.init();
-    I2C.begin();
-    motionShield.initSensor();
-    motionShield.setOperationMode(OPERATION_MODE_NDOF);
-    motionShield.setUpdateMode(MANUAL);
-
-    for(int i = 0; i < numSwitches; i++){
+void loop(){
+    int laps = 1;
+    while(laps == 1){
         
-    }
 }
